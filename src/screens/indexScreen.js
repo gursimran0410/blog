@@ -3,10 +3,9 @@ import {View,Text,StyleSheet,FlatList,Button,TouchableOpacity} from 'react-nativ
 import {Context} from '../context/BlogContext'
 import {Feather} from '@expo/vector-icons'
 const IndexScreen = ({navigation})=>{
-    const {state, addBlogPost, deleteBlogPost} = useContext(Context)
+    const {state, deleteBlogPost} = useContext(Context)
     return(
         <View>
-            <Button title = "Add Post" onPress={()=>addBlogPost()} />
             <FlatList
                 data={state}
                 keyExtractor={(BlogPosts)=> BlogPosts.title}
@@ -28,6 +27,16 @@ const IndexScreen = ({navigation})=>{
         </View>
     )
 }
+IndexScreen.navigationOptions = ({navigation}) => {
+    return{
+        headerRight: ( () =>
+            <TouchableOpacity onPress={()=>navigation.navigate('Create')}>
+              <Feather style={styles.plus} name="plus" size={30} />
+            </TouchableOpacity>
+        )    
+    }
+}
+
 
 const styles = StyleSheet.create({
     row:{
@@ -43,6 +52,9 @@ const styles = StyleSheet.create({
     },
     icon:{
         fontSize: 24
+    },
+    plus:{
+        paddingRight:15
     }
 })
 
