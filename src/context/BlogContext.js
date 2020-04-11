@@ -1,8 +1,11 @@
 import React,{useReducer} from 'react'
 import createDataContext from './createDataContext'
-
+import jsonServer from '../api/jsonServer'
+import { call } from 'react-native-reanimated'
 const blogReducer = (state, action)=>{
     switch (action.type){
+        case 'get_blogpost':
+            return action.payload
         case 'edit_blogpost':
             return state.map((blogPost)=>{
                 return blogPost.id === action.payload.id 
@@ -24,6 +27,15 @@ const blogReducer = (state, action)=>{
             return state
     }
 }
+const getBlogPosts = dispatch=>{
+    return async()=>{
+        const response = await jsonServer.get('/blogPosts')
+        dispatch({
+            type:'get_blogpost',
+            payload: response.data
+        })
+    }
+}
 const addBlogPost = (dispatch)=>{
     return(title, content, callback)=>{
         dispatch({type:'add_blogpost',payload:{title,content}})
@@ -37,16 +49,20 @@ const deleteBlogPost = (dispatch)=>{
 }
 const editBlogPost = (dispatch)=>{
     return(id,title,content,callback)=>{
-        dispatch({
-            type: 'edit_blogpost',
-            payload:{id,title,content}
-        })
-        callback()
+        await jsonServer.post('/blogposts',{title,ocntect})
+       // dispatch({
+       //     type: 'edit_blogpost',
+       //     payload:{id,title,content}
+        //})
+        if(callback){
+            callback()
+        }
+        
     }
 }
 
 export const{Context,Provider} = createDataContext(
     blogReducer,
-    {addBlogPost,deleteBlogPost,editBlogPost},
-    [{title:'TEST POST',content:'TEST CONTENT',id:1}]
+    {addBlogPost,deleteBlogPost,editBlogPost,getBlogPosts},
+    []
 )
